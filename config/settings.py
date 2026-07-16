@@ -1,6 +1,7 @@
 import os
 from pathlib import Path
 
+import dj_database_url
 from django.core.exceptions import ImproperlyConfigured
 
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -25,6 +26,12 @@ if not DEBUG and SECRET_KEY == 'django-insecure-dev-key-change-in-production':
 
 ALLOWED_HOSTS = env_list('ALLOWED_HOSTS', default='localhost,127.0.0.1')
 CSRF_TRUSTED_ORIGINS = env_list('CSRF_TRUSTED_ORIGINS')
+
+DATABSES = {
+    'default': dj_database_url.config(
+        default= os.getenv('DATABASE_URL')
+    )
+}
 
 INSTALLED_APPS = [
     'django.contrib.admin',
