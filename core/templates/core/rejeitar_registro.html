@@ -1,0 +1,32 @@
+{% extends 'core/base.html' %}
+
+{% block title %}Rejeitar Registro{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="page-header">
+        <h1>Rejeitar Registro</h1>
+        <p>{{ registro.estagiario.nome }} — {{ registro.data|date:"d/m/Y" }} — {{ registro.horas }}h</p>
+    </div>
+
+    <div class="card">
+        <p><strong>Descrição:</strong></p>
+        <div class="descricao-list">{{ registro.descricao }}</div>
+
+        <form method="post" style="margin-top: 1.5rem;">
+            {% csrf_token %}
+            {% for field in form %}
+                <div class="form-group">
+                    {{ field.label_tag }}
+                    {{ field }}
+                    {% if field.errors %}
+                        <div class="alert alert-error" style="margin-top:0.5rem;">{{ field.errors.0 }}</div>
+                    {% endif %}
+                </div>
+            {% endfor %}
+            <button type="submit" class="btn btn-danger">Confirmar Rejeição</button>
+            <a href="{% url 'dashboard_supervisor' %}" class="btn btn-outline" style="margin-left: 0.5rem;">Cancelar</a>
+        </form>
+    </div>
+</div>
+{% endblock %}

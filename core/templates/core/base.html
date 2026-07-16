@@ -1,0 +1,57 @@
+{% load static core_tags %}
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Sistema de controle de horas de estágio — Cultura Digital">
+    <title>{% block title %}{{ BRAND_SYSTEM }} — {{ BRAND_NAME }}{% endblock %}</title>
+    <link rel="icon" type="image/png" href="{% static 'img/logo-cultura-digital.png' %}">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body>
+    {% if user.is_authenticated %}
+    <nav class="navbar">
+        <a href="{% url 'home' %}" class="navbar-brand">
+            <img src="{% static 'img/logo-cultura-digital.png' %}" alt="{{ BRAND_NAME }}" class="navbar-logo">
+            <div class="navbar-brand-text">
+                <span class="navbar-brand-sub">{{ BRAND_NAME }}</span>
+                <span class="navbar-brand-title">{{ BRAND_SYSTEM }}</span>
+            </div>
+        </a>
+        <button class="nav-toggle" aria-label="Menu" onclick="document.querySelector('.navbar-nav').classList.toggle('open')">☰</button>
+        <ul class="navbar-nav">
+            {% if user.estagiario %}
+                <li><a href="{% url 'dashboard_estagiario' %}" class="{% nav_active 'dashboard_estagiario' %}">Dashboard</a></li>
+                <li><a href="{% url 'home' %}" class="{% nav_active 'home' %}">Registrar</a></li>
+                <li><a href="{% url 'historico' %}" class="{% nav_active 'historico' %}">Histórico</a></li>
+                <li><a href="{% url 'relatorios' %}" class="{% nav_active 'relatorios' %}">Relatórios</a></li>
+            {% endif %}
+            {% if user.is_staff or user.estagiarios_supervisionados.exists %}
+                <li><a href="{% url 'dashboard_supervisor' %}" class="{% nav_active 'dashboard_supervisor' %}">Supervisor</a></li>
+                {% if not user.estagiario %}
+                <li><a href="{% url 'relatorios' %}" class="{% nav_active 'relatorios' %}">Relatórios</a></li>
+                {% endif %}
+            {% endif %}
+            <li><a href="{% url 'logout' %}" class="nav-logout">Sair</a></li>
+        </ul>
+    </nav>
+    {% endif %}
+
+    <main class="main-content">
+        {% if messages %}
+            <div class="container" style="padding-bottom: 0; padding-top: 1.25rem;">
+                {% for message in messages %}
+                    <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer class="site-footer">
+        <strong>{{ BRAND_NAME }}</strong> — {{ BRAND_SYSTEM }} &copy; {% now "Y" %}
+    </footer>
+</body>
+</html>

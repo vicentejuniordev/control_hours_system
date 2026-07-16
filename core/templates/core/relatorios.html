@@ -1,0 +1,84 @@
+{% extends 'core/base.html' %}
+
+{% block title %}Relatórios{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="page-header">
+        <h1>Relatórios</h1>
+        <p>Consulte horas por período e exporte</p>
+    </div>
+
+    <div class="card">
+        <form method="post">
+            {% csrf_token %}
+            {% if supervisor_mode %}
+            <div class="form-group">
+                <label for="estagiario_id">Estagiário</label>
+                <select name="estagiario_id" id="estagiario_id" class="form-control" required>
+                    <option value="">Selecione...</option>
+                    {% for e in estagiarios %}
+                        <option value="{{ e.pk }}" {% if estagiario and estagiario.pk == e.pk %}selected{% endif %}>
+                            {{ e.nome }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+            {% endif %}
+            {% for field in form %}
+                <div class="form-group">
+                    {{ field.label_tag }}
+                    {{ field }}
+                </div>
+            {% endfor %}
+            <div class="export-buttons">
+                <button type="submit" name="export" value="" class="btn btn-primary">Gerar Relatório</button>
+                {% if dados %}
+                <button type="submit" name="export" value="pdf" class="btn btn-outline">Exportar PDF</button>
+                <button type="submit" name="export" value="excel" class="btn btn-outline">Exportar Excel</button>
+                {% endif %}
+            </div>
+        </form>
+    </div>
+
+    {% if dados %}
+    <div class="card">
+        <div class="card-title">
+            {% if estagiario %}{{ estagiario.nome }} — {% endif %}{{ mes|stringformat:"02d" }}/{{ ano }}
+        </div>
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-value">{{ dados.presencial }}</div>
+                <div class="stat-label">Presencial (h)</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">{{ dados.home_office }}</div>
+                <div class="stat-label">Home Office (h)</div>
+            </div>
+            <div class="stat-card highlight">
+                <div class="stat-value">{{ dados.total }}</div>
+                <div class="stat-label">Total (h)</div>
+            </div>
+        </div>
+
+        {% if registros %}
+        <ul class="record-list" style="margin-top: 1.5rem;">
+            {% for r in registros %}
+            <li class="record-item">
+                <div class="record-info">
+                    <div class="record-date">
+                        {{ r.data|date:"d/m/Y" }}
+                        <span class="badge badge-{% if r.tipo == 'PRESENCIAL' %}presencial{% else %}home{% endif %}">
+                            {{ r.get_tipo_display }}
+                        </span>
+                    </div>
+                </div>
+                <div class="record-hours">{{ r.horas|default:"-" }}h</div>
+            </li>
+            {% endfor %}
+        </ul>
+        {% endif %}
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

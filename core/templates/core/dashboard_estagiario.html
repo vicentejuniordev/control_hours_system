@@ -1,0 +1,66 @@
+{% extends 'core/base.html' %}
+
+{% block title %}Dashboard - Controle de Horas{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="page-header">
+        <h1>Meu Dashboard</h1>
+        <p>{{ estagiario.curso }} — {{ estagiario.instituicao }}</p>
+    </div>
+
+    <div class="stats-grid">
+        <div class="stat-card highlight">
+            <div class="stat-value">{{ horas_realizadas }}</div>
+            <div class="stat-label">Horas realizadas</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-value">{{ horas_previstas }}</div>
+            <div class="stat-label">Horas previstas</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-value">{{ horas_presenciais }}</div>
+            <div class="stat-label">Presenciais</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-value">{{ horas_home_office }}</div>
+            <div class="stat-label">Home Office</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-value">{{ horas_restantes }}</div>
+            <div class="stat-label">Restantes</div>
+        </div>
+    </div>
+
+    <div class="card" style="margin-top: 2rem;">
+        <div class="card-title">Últimos registros</div>
+        {% if registros %}
+        <ul class="record-list">
+            {% for r in registros %}
+            <li class="record-item">
+                <div class="record-info">
+                    <div class="record-date">
+                        {% if r.status == 'APROVADO' or r.tipo == 'PRESENCIAL' %}✔{% elif r.status == 'PENDENTE' %}⏳{% else %}✗{% endif %}
+                        {{ r.data|date:"d/m" }}
+                        <span class="badge badge-{% if r.tipo == 'PRESENCIAL' %}presencial{% else %}home{% endif %}">
+                            {{ r.get_tipo_display }}
+                        </span>
+                        {% if r.tipo == 'HOME_OFFICE' %}
+                            <span class="badge badge-{{ r.status|lower }}">{{ r.get_status_display }}</span>
+                        {% endif %}
+                    </div>
+                    {% if r.descricao %}
+                        <div class="record-meta">{{ r.descricao|truncatechars:60 }}</div>
+                    {% endif %}
+                </div>
+                <div class="record-hours">{{ r.horas }}h</div>
+            </li>
+            {% endfor %}
+        </ul>
+        {% else %}
+            <p style="color: var(--muted);">Nenhum registro ainda.</p>
+        {% endif %}
+        <a href="{% url 'historico' %}" class="btn btn-outline" style="margin-top: 1rem;">Ver histórico completo</a>
+    </div>
+</div>
+{% endblock %}

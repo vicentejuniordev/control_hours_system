@@ -1,0 +1,37 @@
+{% extends 'core/base.html' %}
+
+{% block title %}Registrar Entrada - Presencial{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="page-header">
+        <h1>Registro Presencial</h1>
+        <p>Registrar entrada</p>
+    </div>
+
+    <div class="card">
+        <form method="post">
+            {% csrf_token %}
+            {% for field in form %}
+                <div class="form-group">
+                    {{ field.label_tag }}
+                    {{ field }}
+                    {% if field.errors %}
+                        <div class="alert alert-error" style="margin-top:0.5rem;">{{ field.errors.0 }}</div>
+                    {% endif %}
+                </div>
+            {% endfor %}
+            <button type="submit" class="btn btn-primary">Registrar Entrada</button>
+            <a href="{% url 'home' %}" class="btn btn-outline" style="margin-left: 0.5rem;">Voltar</a>
+        </form>
+    </div>
+
+    <div class="card">
+        <div class="card-title">Como funciona</div>
+        <p style="color: var(--muted); font-size: 0.9rem;">
+            Registre a entrada ao chegar. Ao sair, informe a hora de saída e o sistema calcula automaticamente as horas trabalhadas.
+            Para dois turnos no mesmo dia, faça um novo registro de entrada após registrar a saída do primeiro turno.
+        </p>
+    </div>
+</div>
+{% endblock %}

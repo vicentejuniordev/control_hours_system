@@ -1,0 +1,69 @@
+{% extends 'core/base.html' %}
+
+{% block title %}Dashboard Supervisor{% endblock %}
+
+{% block content %}
+<div class="container-wide">
+    <div class="page-header">
+        <h1>Dashboard do Supervisor</h1>
+        <p>Acompanhe a frequência e aprove registros de home office</p>
+    </div>
+
+    {% if pendentes %}
+    <div class="card">
+        <div class="card-title">Pendentes de aprovação ({{ pendentes|length }})</div>
+        {% for r in pendentes %}
+        <div class="card approval-card" style="margin-bottom: 1rem;">
+            <div style="display: flex; justify-content: space-between; align-items: start; flex-wrap: wrap; gap: 1rem;">
+                <div>
+                    <strong>{{ r.estagiario.nome }}</strong>
+                    <span class="badge badge-pendente">Pendente</span>
+                    <p style="margin-top: 0.5rem;"><strong>Data:</strong> {{ r.data|date:"d/m/Y" }}</p>
+                    <p><strong>Horas:</strong> {{ r.horas }}</p>
+                    <p><strong>Descrição:</strong></p>
+                    <div class="descricao-list">{{ r.descricao }}</div>
+                    {% if r.anexo %}
+                        <p style="margin-top: 0.5rem;"><a href="{{ r.anexo.url }}" target="_blank">Ver anexo</a></p>
+                    {% endif %}
+                </div>
+                <div class="approval-actions">
+                    <form method="post" action="{% url 'aprovar_registro' r.pk %}">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-success">Aprovar</button>
+                    </form>
+                    <a href="{% url 'rejeitar_registro' r.pk %}" class="btn btn-danger">Rejeitar</a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <div class="card">
+        <div class="card-title">Estagiários</div>
+
+        <div class="filter-bar">
+            {% for value, label in filtros %}
+                <a href="?filtro={{ value }}" class="{% if filtro == value %}active{% endif %}">{{ label }}</a>
+            {% endfor %}
+        </div>
+
+        {% if lista %}
+            {% for item in lista %}
+            <div class="student-list-item">
+                <div>
+                    <div class="student-name">{{ item.estagiario.nome }}</div>
+                    <div class="record-meta">{{ item.estagiario.curso }}</div>
+                </div>
+                <div style="text-align: right;">
+                    <div class="student-hours">{{ item.horas }}h</div>
+                    <a href="{% url 'historico' %}?estagiario={{ item.estagiario.pk }}" style="font-size: 0.85rem;">Ver histórico</a>
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+            <p style="color: var(--muted);">Nenhum estagiário encontrado.</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

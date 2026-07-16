@@ -1,0 +1,26 @@
+{% extends 'core/base.html' %}
+
+{% block title %}Registrar - Controle de Horas{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="page-header">
+        <h1>Olá, {{ user.estagiario.nome }}!</h1>
+        <p>Selecione o tipo de registro</p>
+    </div>
+
+    <div class="flow-grid">
+        <a href="{% url 'presencial_entrada' %}" class="flow-card">
+            <div class="flow-icon">🏢</div>
+            <div class="flow-title">Presencial</div>
+            <div class="flow-desc">Registrar entrada e saída no local de trabalho</div>
+        </a>
+
+        <a href="{% url 'home_office_registro' %}" class="flow-card">
+            <div class="flow-icon">🏠</div>
+            <div class="flow-title">Home Office</div>
+            <div class="flow-desc">Informar horas e atividades realizadas remotamente</div>
+        </a>
+    </div>
+</div>
+{% endblock %}

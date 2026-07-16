@@ -1,0 +1,54 @@
+{% extends 'core/base.html' %}
+
+{% block title %}Histórico{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="page-header">
+        <h1>Histórico de Registros</h1>
+        <p>{{ estagiario.nome }}</p>
+    </div>
+
+    <div class="filter-bar">
+        {% for value, label in filtros %}
+            <a href="?filtro={{ value }}{% if request.GET.estagiario %}&estagiario={{ request.GET.estagiario }}{% endif %}"
+               class="{% if filtro == value %}active{% endif %}">{{ label }}</a>
+        {% endfor %}
+    </div>
+
+    <div class="card">
+        {% if registros %}
+        <ul class="record-list">
+            {% for r in registros %}
+            <li class="record-item">
+                <div class="record-info">
+                    <div class="record-date">
+                        {{ r.data|date:"d/m/Y" }}
+                        <span class="badge badge-{% if r.tipo == 'PRESENCIAL' %}presencial{% else %}home{% endif %}">
+                            {{ r.get_tipo_display }}
+                        </span>
+                        {% if r.tipo == 'HOME_OFFICE' %}
+                            <span class="badge badge-{{ r.status|lower }}">{{ r.get_status_display }}</span>
+                        {% endif %}
+                    </div>
+                    <div class="record-meta">
+                        {% if r.entrada %}Entrada: {{ r.entrada|time:"H:i" }}{% endif %}
+                        {% if r.saida %} — Saída: {{ r.saida|time:"H:i" }}{% endif %}
+                    </div>
+                    {% if r.descricao %}
+                        <div class="descricao-list">{{ r.descricao|truncatechars:120 }}</div>
+                    {% endif %}
+                    {% if r.observacao %}
+                        <div class="record-meta" style="color: var(--danger);">Motivo: {{ r.observacao }}</div>
+                    {% endif %}
+                </div>
+                <div class="record-hours">{{ r.horas|default:"-" }}h</div>
+            </li>
+            {% endfor %}
+        </ul>
+        {% else %}
+            <p style="color: var(--muted);">Nenhum registro encontrado.</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

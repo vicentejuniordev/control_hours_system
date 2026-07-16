@@ -1,0 +1,44 @@
+{% extends 'core/base.html' %}
+{% load static %}
+
+{% block title %}Login — {{ BRAND_NAME }}{% endblock %}
+
+{% block content %}
+<div class="login-page">
+    <div class="login-brand-panel">
+        <div class="login-brand-content">
+            <img src="{% static 'img/logo-cultura-digital.png' %}" alt="{{ BRAND_NAME }}" class="login-logo">
+            <p class="login-brand-tagline">
+                Plataforma de gestão de carga horária para estagiários — presencial e home office em um só lugar.
+            </p>
+            <ul class="login-features">
+                <li>Registro de entrada e saída presencial</li>
+                <li>Controle de atividades em home office</li>
+                <li>Aprovação pelo supervisor em tempo real</li>
+                <li>Relatórios e exportação PDF/Excel</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="login-form-panel">
+        <div class="login-card">
+            <h1 class="login-title">Bem-vindo</h1>
+            <p class="login-subtitle">Acesse sua conta para registrar horas</p>
+
+            <form method="post">
+                {% csrf_token %}
+                {% for field in form %}
+                    <div class="form-group">
+                        {{ field.label_tag }}
+                        {{ field }}
+                        {% if field.errors %}
+                            <div class="alert alert-error" style="margin-top:0.5rem;">{{ field.errors.0 }}</div>
+                        {% endif %}
+                    </div>
+                {% endfor %}
+                <button type="submit" class="btn btn-primary btn-block">Entrar</button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
