@@ -115,7 +115,7 @@ TEMPLATES = [
 # BANCO DE DADOS
 # ==============================================================================
 
-DATABASE_URL = os.getenv("DATABASE_URL")
+DATABASE_URL = 'postgresql://neondb_owner:npg_sP1DrM0TpCZb@ep-bold-voice-ac5461sp-pooler.sa-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require'
 
 if DATABASE_URL:
     DATABASES = {

@@ -13,6 +13,8 @@ class LoginForm(AuthenticationForm):
         label='Senha',
         widget=forms.PasswordInput(attrs={'class': 'form-control', 'placeholder': 'Senha'}),
     )
+    
+    
 
 
 class EntradaPresencialForm(forms.ModelForm):

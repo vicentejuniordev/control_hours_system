@@ -72,6 +72,12 @@
                             {{ r.get_tipo_display }}
                         </span>
                     </div>
+                    {% if r.descricao %}
+                    <div class="record-meta"><strong>Descrição das atividades:</strong></div>
+                    <div class="descricao-list">{{ r.descricao }}</div>
+                    {% else %}
+                    <div class="record-meta">Sem descrição cadastrada.</div>
+                    {% endif %}
                 </div>
                 <div class="record-hours">{{ r.horas|default:"-" }}h</div>
             </li>

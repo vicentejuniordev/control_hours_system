@@ -36,7 +36,8 @@
                         {% if r.saida %} — Saída: {{ r.saida|time:"H:i" }}{% endif %}
                     </div>
                     {% if r.descricao %}
-                        <div class="descricao-list">{{ r.descricao|truncatechars:120 }}</div>
+                        <div class="record-meta"><strong>Descrição das atividades:</strong></div>
+                        <div class="descricao-list">{{ r.descricao }}</div>
                     {% endif %}
                     {% if r.observacao %}
                         <div class="record-meta" style="color: var(--danger);">Motivo: {{ r.observacao }}</div>

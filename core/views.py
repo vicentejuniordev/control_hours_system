@@ -2,6 +2,7 @@ from calendar import monthrange
 from datetime import date
 from decimal import Decimal
 from io import BytesIO
+from xml.sax.saxutils import escape
 
 from django.contrib import messages
 from django.contrib.auth import login, logout
@@ -13,6 +14,7 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
 from django.views.decorators.http import require_POST
 from openpyxl import Workbook
+from openpyxl.styles import Alignment
 from reportlab.lib import colors
 from reportlab.lib.pagesizes import A4
 from reportlab.lib.styles import getSampleStyleSheet
@@ -384,20 +386,25 @@ def _exportar_pdf(estagiario, mes, ano, dados, registros):
 
     if registros.exists():
         elements.append(Paragraph('Detalhamento', styles['Heading2']))
-        detalhe = [['Data', 'Tipo', 'Horas', 'Status']]
+        detalhe = [['Data', 'Tipo', 'Horas', 'Status', 'Descrição das atividades']]
         for r in registros:
+            descricao = escape(r.descricao or 'Sem descrição cadastrada.').replace('\n', '<br/>')
             detalhe.append([
                 r.data.strftime('%d/%m/%Y'),
                 r.get_tipo_display(),
                 str(r.horas or '-'),
                 r.get_status_display(),
+                Paragraph(descricao, styles['BodyText']),
             ])
-        t2 = Table(detalhe, colWidths=[3 * cm, 4 * cm, 3 * cm, 4 * cm])
+        t2 = Table(detalhe, colWidths=[2.5 * cm, 3 * cm, 2 * cm, 2.5 * cm, 7 * cm], repeatRows=1)
         t2.setStyle(TableStyle([
             ('BACKGROUND', (0, 0), (-1, 0), colors.HexColor('#64748b')),
             ('TEXTCOLOR', (0, 0), (-1, 0), colors.white),
             ('GRID', (0, 0), (-1, -1), 0.5, colors.grey),
             ('FONTSIZE', (0, 0), (-1, -1), 9),
+            ('VALIGN', (0, 0), (-1, -1), 'TOP'),
+            ('LEFTPADDING', (0, 0), (-1, -1), 4),
+            ('RIGHTPADDING', (0, 0), (-1, -1), 4),
         ]))
         elements.append(t2)
 
@@ -429,8 +436,12 @@ def _exportar_excel(estagiario, mes, ano, dados, registros):
             r.saida.strftime('%H:%M') if r.saida else '',
             float(r.horas) if r.horas else '',
             r.get_status_display(),
-            r.descricao[:200] if r.descricao else '',
+            r.descricao or 'Sem descrição cadastrada.',
         ])
+
+    ws.column_dimensions['G'].width = 60
+    for cell in ws['G']:
+        cell.alignment = Alignment(wrap_text=True, vertical='top')
 
     buffer = BytesIO()
     wb.save(buffer)
